@@ -1,0 +1,50 @@
+# BGF-YOLO configuration based on YOLOv5s with CSPStage and GFPN
+# Parameters
+nc: 80  # number of classes
+depth_multiple: 0.33  # model depth multiple
+width_multiple: 0.50  # layer channel multiple
+anchors:
+  - [10,13, 16,30, 33,23]  # P3/8
+  - [30,61, 62,45, 59,119]  # P4/16
+  - [116,90, 156,198, 373,326]  # P5/32
+
+# BGF-YOLO backbone with CSPStage
+backbone:
+  # [from, number, module, args]
+  [[-1, 1, DP_Conv, [64, 6, 2, 2]],  # 0-P1/2
+   [-1, 1, DP_Conv, [128, 3, 2]],    # 1-P2/4
+   [-1, 3, CSPStage, [128]],      # 2 - 使用CSPStage替代C3
+   [-1, 1, DP_Conv, [256, 3, 2]],    # 3-P3/8
+   [-1, 6, CSPStage, [256]],      # 4 - 使用CSPStage替代C3
+   [-1, 1, DP_Conv, [512, 3, 2]],    # 5-P4/16
+   [-1, 9, CSPStage, [512]],      # 6 - 使用CSPStage替代C3
+   [-1, 1, DP_Conv, [1024, 3, 2]],   # 7-P5/32
+   [-1, 3, CSPStage, [1024]],     # 8 - 使用CSPStage替代C3
+   [-1, 1, EnhancedSPPF, [1024, 5]], # 9 - 增强的SPPF
+  ]
+
+# BGF-YOLO head with BiFPN
+head:
+  # 使用 BiFPNBlock 替代 Concat 进行特征融合
+  [[-1, 1, DP_Conv, [512, 1, 1]],
+   [-1, 1, nn.Upsample, [None, 2, 'nearest']],
+   [[-1, 6], 1, BiFPNBlock, [512]],  # 12 - 使用BiFPNBlock替代Concat
+   [-1, 3, BiFPNC3, [512, False]],  # 13 - 使用BiFPNC3
+
+   [-1, 1, DP_Conv, [256, 1, 1]],
+   [-1, 1, nn.Upsample, [None, 2, 'nearest']],
+   [[-1, 4], 1, BiFPNBlock, [256]],  # 16 - 使用BiFPNBlock替代Concat
+   [-1, 3, BiFPNC3, [256, False]],  # 17 (P3/8-small) - 使用BiFPNC3
+
+   [-1, 1, DP_Conv, [256, 3, 2]],
+   [[-1, 14], 1, BiFPNBlock, [512]],  # 19 - 使用BiFPNBlock替代Concat
+   [-1, 3, BiFPNC3, [512, False]],  # 20 (P4/16-medium) - 使用BiFPNC3
+
+   [-1, 1, DP_Conv, [512, 3, 2]],
+   [[-1, 10], 1, BiFPNBlock, [1024]],  # 22 - 使用BiFPNBlock替代Concat
+   [-1, 3, BiFPNC3, [1024, False]],  # 23 (P5/32-large) - 使用BiFPNC3
+
+   [[17, 20, 23], 1, Detect, [nc, anchors]],  # Detect(P3, P4, P5)
+  ]
+
+  
