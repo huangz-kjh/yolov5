@@ -55,6 +55,9 @@ YOLOv5 主要由三部分组成：
 
 * 输出目标框 + 分类结果
 
+改进的模型
+<img width="2070" height="1028" alt="3682869bf30e28a9156f8091cd73f97e" src="https://github.com/user-attachments/assets/2b6767b4-f1bd-456e-8b76-36594d6b4b37" />
+
 ---
 
 ## 💡 核心特点（Key Features）
@@ -69,9 +72,7 @@ YOLOv5 主要由三部分组成：
 
 ## 🖼️ 效果展示（Demo）
 
-![val_batch2_labels](https://github.com/user-attachments/assets/10a2851f-611c-4fc6-9d46-4f9bc96afe33)
-![val_batch2_pred](https://github.com/user-attachments/assets/bab70c9f-b3ba-4e13-b80b-537aee2eee74)
-
+<img width="1488" height="1190" alt="3cc027d200f01ac0e41d9546d9af96fc" src="https://github.com/user-attachments/assets/f8e19cea-0d77-489f-beba-41fd6a54ad19" />
 
 ---
 
@@ -79,9 +80,7 @@ YOLOv5 主要由三部分组成：
 
 | 模型      | mAP  |
 | ------- | ---- |
-| YOLOv5s | 0.72 |
-
-👉（你可以替换成你自己的结果）
+| YOLOv5s | 0.82 |
 
 ---
 
